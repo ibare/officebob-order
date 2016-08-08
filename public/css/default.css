@@ -1,0 +1,51 @@
+body {
+    background-image: linear-gradient(135deg, #8eaaff, #80ff84);
+}
+.headline {
+    line-height: 130%;
+}
+.thin {
+    font-weight: 200;
+}
+.card .card-title {
+    font-size: 36px;
+    color: #222 !important;
+    line-height: 120%;
+}
+.time {
+    font-weight: 200;
+    color: white;
+    background-color: #222;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+.warning {
+    font-size: 22px;
+    font-weight: 200;
+    color: white;
+    background-color: crimson;
+    padding: 6px;
+}
+.card .card-title .time .type {
+    font-size: 16px;
+}
+.card .card-title .num-order  {
+    font-weight: bold;
+    color: #222;
+}
+.card .card-title .current {
+    color: white;
+    font-weight: bold;
+    font-size: 26px;
+}
+.card-content {
+    color: #888;
+    font-weight: 200;
+}
+.min {
+    font-size: 16px;
+}
+.cancel.order {
+    display: none;
+}
