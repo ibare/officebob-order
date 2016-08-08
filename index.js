@@ -1,11 +1,22 @@
+var lod = require('lodash');
+var moment = require('moment');
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
-var mongo = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+//var mongo = require('mongodb').MongoClient;
 var io = require('socket.io')(server);
-
-var orderdate = '2016-08-01';
 var mongodb = null;
+var workDate = moment().format('YYYY-MM-DD');
+
+var orderSchema = new Schema({
+  orderDate: { type: String },
+  lastOrderNumber: { type: Number },
+  orders: { type: Array }
+});
+
+var Orders = mongoose.model('order', orderSchema);
 
 const CHANNEL = {
   RESERVE: 'channel:reserve',
@@ -13,41 +24,17 @@ const CHANNEL = {
   CONFIRM: 'channel:confirm'
 };
 
-// function updateOrders() {
-//   var orders = mongodb.collection(CHANNEL.RESERVE);
-//
-//   orders.updateOne({ orderdate: orderdate }, {
-//       $set: {
-//         '1st': numOrders['1st'],
-//         '2th': numOrders['2th'],
-//         '3rd': numOrders['3rd']
-//       }}, function(err, result) {
-//       console.log('update!');
-//     }
-//   );
-// }
+function setToday() {
+  let today = moment().format('YYYY-MM-DD');
 
-mongo.connect('mongodb://officebob:officeboborder@ds011251.mlab.com:11251/heroku_q9xb9lk4', function(err, db) {
-  if (err) {
-    return console.error(err);
-  }
+  if (workDate != today)
+    workDate = today;
+}
 
-  mongodb = db;
+setInterval(setToday, 1000*60);
 
-  var orders = mongodb.collection('orders');
-
-  orders.find({ orderdate: orderdate }).toArray((err, docs) => {
-    if (err) {
-      return console.error(err);
-    }
-
-    // numOrders['1st'] = docs[0]['1st'];
-    // numOrders['2th'] = docs[0]['2th'];
-    // numOrders['3rd'] = docs[0]['3rd'];
-    // numOrders['slug'] = docs[0]['slug'];
-
-    console.log("Connected mongodb");
-  });
+mongoose.connect('mongodb://officebob:officeboborder@ds011251.mlab.com:11251/heroku_q9xb9lk4', (err, db) => {
+  console.log('connected mongodb');
 });
 
 app.use(express.static('public'));
@@ -57,11 +44,62 @@ app.use(express.static('public'));
  */
 io.sockets.on('connection', socket => {
   // orders 채널 조인
-  socket.join(CHANNEL.ORDER);
-  socket.join(CHANNEL.CONFIRM);
+  socket.join('ALL');
 
-  socket.on(`${CHANNEL.ORDER}@reserve:order`, time => {
-    socket.emit(`${CHANNEL.RESERVE}@reserve:order:response`, Math.random());
+  // 모든 주문 요청 수신
+  socket.on(`${CHANNEL.ORDER}@all:orders`, () => {
+    console.log('@all:orders');
+    Orders.findOne({
+      orderDate: workDate
+    }).exec((err, docs) => {
+      socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+    });
+  });
+
+  // 신규 주문 예약
+  socket.on(`${CHANNEL.ORDER}@reserve:order`, bill => {
+    Orders.findOne({
+      orderDate: workDate
+    }).exec((err, docs) => {
+      let order = {
+        slug: bill.slug,
+        ramen1: bill.ramen1,
+        ramen2: bill.ramen2,
+        orderNumber: -1,
+        status: 'reserve',
+        timestamp: Date.now()
+      };
+
+      docs.orders.push(order);
+      docs.save((err, docs) => {
+        // 신규 예약 번호 응답
+        socket.emit(`${CHANNEL.RESERVE}@reserve:order:response`, bill.slug);
+        // 주문서 업데이트
+        socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+      });
+    });
+  });
+
+  // 주문 시작
+  socket.on(`${CHANNEL.CONFIRM}@start:order`, slug => {
+    Orders.findOne({
+      orderDate: workDate,
+    }).exec((err, docs) => {
+      let newOrderNumber = docs.lastOrderNumber + 1;
+
+      Orders.update({ orderDate: workDate, 'orders.slug': slug }, { '$set': {
+        lastOrderNumber: newOrderNumber,
+        'orders.$.status': 'cook',
+        'orders.$.orderNumber': newOrderNumber
+      }}, function(err) {
+        // 주문서 업데이트
+        Orders.findOne({
+          orderDate: workDate,
+        }).exec((err, docs) => {
+          socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+        });
+      });
+    });
   });
 
   console.log('connect');
