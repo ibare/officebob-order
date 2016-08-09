@@ -9,13 +9,13 @@ var io = require('socket.io')(server);
 var mongodb = null;
 var workDate = moment().format('YYYY-MM-DD');
 
-var orderSchema = new Schema({
+var ramenSchema = new Schema({
   orderDate: { type: String },
   lastOrderNumber: { type: Number },
   orders: { type: Array }
 });
 
-var Orders = mongoose.model('order', orderSchema);
+var Ramens = mongoose.model('ramen', ramenSchema);
 
 const CHANNEL = {
   RESERVE: 'channel:reserve',
@@ -48,7 +48,7 @@ io.sockets.on('connection', socket => {
   // 모든 주문 요청 수신
   socket.on(`${CHANNEL.ORDER}@all:orders`, () => {
     console.log('@all:orders');
-    Orders.findOne({
+    Ramens.findOne({
       orderDate: workDate
     }).exec((err, docs) => {
       socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
@@ -57,11 +57,13 @@ io.sockets.on('connection', socket => {
 
   // 신규 주문 예약
   socket.on(`${CHANNEL.ORDER}@reserve:order`, bill => {
-    Orders.findOne({
+    Ramens.findOne({
       orderDate: workDate
     }).exec((err, docs) => {
+      console.log(workDate, err, docs);
       let order = {
         slug: bill.slug,
+        time: bill.time,
         ramen1: bill.ramen1,
         ramen2: bill.ramen2,
         orderNumber: -1,
@@ -79,20 +81,26 @@ io.sockets.on('connection', socket => {
     });
   });
 
+  // 주문 확인
+  socket.on(`${CHANNEL.ORDER}@confirm:order`, bill => {
+    socket.to('ALL').emit(`${CHANNEL.ORDER}@check:order:response`, bill.slug);
+  });
+
   // 조리 시작
   socket.on(`${CHANNEL.CONFIRM}@start:order`, slug => {
-    Orders.findOne({
+    console.log('@start:order');
+    Ramens.findOne({
       orderDate: workDate,
     }).exec((err, docs) => {
       let newOrderNumber = docs.lastOrderNumber + 1;
 
-      Orders.update({ orderDate: workDate, 'orders.slug': slug }, { '$set': {
-        lastOrderNumber: newOrderNumber,
+      Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
+        'lastOrderNumber': newOrderNumber,
         'orders.$.status': 'cook',
         'orders.$.orderNumber': newOrderNumber
-      }}, function(err) {
+      }}, function(err, docs) {
         // 주문서 업데이트
-        Orders.findOne({
+        Ramens.findOne({
           orderDate: workDate,
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
@@ -106,16 +114,16 @@ io.sockets.on('connection', socket => {
 
   // 조리 완료
   socket.on(`${CHANNEL.CONFIRM}@finsh:order`, slug => {
-    Orders.findOne({
+    Ramens.findOne({
       orderDate: workDate,
-    }).exec((err, docs) => {
+    }, (err, docs) => {
       let newOrderNumber = docs.lastOrderNumber + 1;
 
-      Orders.update({ orderDate: workDate, 'orders.slug': slug }, { '$set': {
+      Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
         'orders.$.status': 'cooked'
       }}, function(err) {
         // 주문서 업데이트
-        Orders.findOne({
+        Ramens.findOne({
           orderDate: workDate,
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);

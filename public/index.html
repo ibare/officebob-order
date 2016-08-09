@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
   <link rel="stylesheet" href="/css/default.css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -23,18 +23,29 @@
   <div class="row">
     <div class="col s12 center-align">
       <h1 class="headline" itemprop="description" style="font-size: 29px;">
-          <strong class="bold">라면 주문 페이지</strong>
+          <strong class="bold">셰프의라면</strong>
       </h1>
     </div>
   </div>
   <div class="row">
     <form class="col s12">
       <div class="row">
-        <div class="input-field col s6 center">
+        <div class="input-field col s4">
+          <strong style="margin-left: 1em;">타임 선택</strong>
+          <p>
+            <input name="time" type="radio" value="1st" id="time-1"/>
+            <label for="time-1">4:00pm</label>
+          </p>
+          <p>
+            <input name="time" type="radio" value="2th" id="time-2" checked/>
+            <label for="time-2">4:30pm</label>
+          </p>
+        </div>
+        <div class="input-field col s4">
           <strong>파송송계란탁</strong>
           <p>
             <input name="group1" type="radio" value="0" id="group1-0"/>
-            <label for="group1-0">안먹어요</label>
+            <label for="group1-0">안먹음</label>
           </p>
           <p>
             <input name="group1" type="radio" value="1" id="group1-1" checked/>
@@ -49,11 +60,11 @@
             <label for="group1-3">세그릇</label>
           </p>
         </div>
-        <div class="input-field col s6 center">
+        <div class="input-field col s4">
           <strong>치즈 라면</strong>
           <p>
             <input name="group2" type="radio" value="0" id="group2-0" checked/>
-            <label for="group2-0">안먹어요</label>
+            <label for="group2-0">안먹음</label>
           </p>
           <p>
             <input name="group2" type="radio" value="1" id="group2-1"/>
@@ -73,7 +84,7 @@
   </div>
   <div class="row">
     <div class="col s12 center-align">
-      <a href="#" class="btn btn-order">주문하기</a>
+      <a href="#" class="btn btn-order">예약하기</a>
     </div>
   </div>
   <div class="row">

@@ -49,3 +49,12 @@ body {
 .cancel.order {
     display: none;
 }
+
+.collection-item {
+  transition: background-color 1s;
+}
+
+.blink {
+  transition: background-color 1s;
+  background-color: rgba(255,0,177,0.7) !important;
+}

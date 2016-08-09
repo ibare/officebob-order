@@ -1,3 +1,8 @@
+function blinker() {
+  $('.blink_me').fadeOut(500);
+  $('.blink_me').fadeIn(500);
+}
+
 $(function() {
   var template = Handlebars.compile($("#orders-template").html());
   var CHANNEL = {
@@ -28,5 +33,8 @@ $(function() {
     });
   });
 
-
+  socket.on(CHANNEL.ORDER+'@check:order:response', function(slug) {
+    $('.slug-'+slug).addClass('blink');
+    setTimeout(function() { $('.slug-'+slug).removeClass('blink') }, 1000);
+  });
 });

@@ -35,7 +35,8 @@
 <script id="orders-template" type="text/x-handlebars-template">
   <ul class="collection">
     {{#each orders}}
-    <li class="collection-item">
+    <li class="collection-item slug-{{slug}}">
+      <a name="slug-{{slug}}"></a>
       {{slug}}
       <span>{{status}}</span>
       <span>{{ramen1}}</span>

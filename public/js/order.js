@@ -1,5 +1,7 @@
+var SAVEID = 'ramenOrder-'+moment().format('YYYY-MM-DD');
+
 function getRamenOrder() {
-  let ramenOrder = window.localStorage.getItem('ramenOrder');
+  var ramenOrder = window.localStorage.getItem(SAVEID);
 
   if (ramenOrder) {
     return JSON.parse(ramenOrder);
@@ -9,7 +11,7 @@ function getRamenOrder() {
 }
 
 function setRamenOrder(info) {
-  window.localStorage.setItem('ramenOrder', JSON.stringify(info));
+  window.localStorage.setItem(SAVEID, JSON.stringify(info));
   return info;
 }
 
@@ -24,12 +26,17 @@ $(function() {
   var socket = io();
 
   if (ramenOrder) {
+    $('.btn-order').text('키친에 예약 확인');
+
     if (ramenOrder.orderNumber > 0) {
       $('.order-result>h1').text(ramenOrder.orderNumber);
     } else {
       $('.order-result>h1').text(ramenOrder.slug);
     }
+  } else {
+    $('.btn-order').text('예약하기');
   }
+
   // 예약 완료
   socket.on(CHANNEL.RESERVE+'@reserve:order:response', function(orderNumber) {
     ramenOrder.orderNumber = orderNumber;
@@ -39,7 +46,7 @@ $(function() {
   });
 
   // 조리 시작
-  socket.on(CHANNEL.CONFIRM+'@start:order:response', info => {
+  socket.on(CHANNEL.CONFIRM+'@start:order:response', function(info) {
     if (info.slug == slug) {
       ramenOrder.status = 'cook';
 
@@ -52,37 +59,46 @@ $(function() {
   /**
    * 조리 완료!!
    */
-  socket.on(CHANNEL.CONFIRM+'@finish:order:response', info => {
+  socket.on(CHANNEL.CONFIRM+'@finish:order:response', function(info) {
     console.log(ramenOrder, info);
     if (info.slug == ramenOrder.slug) {
       ramenOrder.status = 'cooked';
       setRamenOrder(ramenOrder);
 
-      alert('조리가 완료되었습니다.')
+      $('.order-result>h1').text('라면이 나왔습니다~~');
     }
   });
 
+  // 예약 요청
   $('.btn-order').on('click', function() {
-    // 주문하기
-    var group1 = Number($('input[name=group1]:checked').val());
-    var group2 = Number($('input[name=group2]:checked').val());
-    var min = 100;
-    var max = 999;
+    if (!ramenOrder || ramenOrder.status != 'reserve') {
+      var time = $('input[name=time]:checked').val();
+      var group1 = +$('input[name=group1]:checked').val();
+      var group2 = +$('input[name=group2]:checked').val();
+      var min = 100;
+      var max = 999;
 
-    slug = Math.floor(Math.random()*(max-min+1)+min) + Date.now().toString().substr(10);
+      slug = Math.floor(Math.random()*(max-min+1)+min);
 
-    ramenOrder = setRamenOrder({
-      slug: slug,
-      orderNumber: 0,
-      ramen1: group1,
-      ramen2: group2,
-      status: 'reserve'
-    });
+      ramenOrder = setRamenOrder({
+        slug: slug,
+        orderNumber: 0,
+        time: time,
+        ramen1: group1,
+        ramen2: group2,
+        status: 'reserve'
+      });
 
-    socket.emit(`${CHANNEL.ORDER}@reserve:order`, {
-      slug: slug,
-      ramen1: group1,
-      ramen2: group2
-    });
+      socket.emit(`${CHANNEL.ORDER}@reserve:order`, {
+        slug: slug,
+        time: time,
+        ramen1: group1,
+        ramen2: group2
+      });
+    } else {
+      socket.emit(`${CHANNEL.ORDER}@confirm:order`, {
+        slug: ramenOrder.slug
+      });
+    }
   });
 });
