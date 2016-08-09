@@ -35,7 +35,14 @@
 <script id="orders-template" type="text/x-handlebars-template">
   <ul class="collection">
     {{#each orders}}
-    <li class="collection-item">{{slug}} <span>{{status}}</span> <span>{{ramen1}}</span> <span>{{ramen2}}</span> {{#if isReserve}} <a href="#" class="order confirm" data-slug="{{slug}}">조리 시작</a>{{/if}}</li>
+    <li class="collection-item">
+      {{slug}}
+      <span>{{status}}</span>
+      <span>{{ramen1}}</span>
+      <span>{{ramen2}}</span>
+      {{#if isReserve}} <a href="#" class="order confirm" data-slug="{{slug}}">조리 시작</a>{{/if}}
+      {{#if isCooking}}#{{orderNumber}} 조리중... <a href="#" class="order cooked" data-slug="{{slug}}">조리 완료</a>{{/if}}
+    </li>
     {{/each}}
   </ul>
 </script>

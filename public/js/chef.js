@@ -12,6 +12,8 @@ $(function() {
   socket.on(CHANNEL.ORDER+'@update:orders:response', function(orders) {
     var renderData = orders.map(function(order) {
       order.isReserve = order.status == 'reserve';
+      order.isCooking = order.status == 'cook';
+      order.isCooked = order.status == 'cooked';
       return order;
     });
 
@@ -19,6 +21,10 @@ $(function() {
 
     $('.order.confirm').on('click', function(event) {
       socket.emit(CHANNEL.CONFIRM+'@start:order', event.target.dataset.slug);
+    });
+
+    $('.order.cooked').on('click', function(event) {
+      socket.emit(CHANNEL.CONFIRM+'@finsh:order', event.target.dataset.slug);
     });
   });
 

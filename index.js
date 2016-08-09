@@ -5,7 +5,6 @@ var app = express();
 var server = require('http').Server(app);
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var mongo = require('mongodb').MongoClient;
 var io = require('socket.io')(server);
 var mongodb = null;
 var workDate = moment().format('YYYY-MM-DD');
@@ -80,7 +79,7 @@ io.sockets.on('connection', socket => {
     });
   });
 
-  // 주문 시작
+  // 조리 시작
   socket.on(`${CHANNEL.CONFIRM}@start:order`, slug => {
     Orders.findOne({
       orderDate: workDate,
@@ -96,13 +95,37 @@ io.sockets.on('connection', socket => {
         Orders.findOne({
           orderDate: workDate,
         }).exec((err, docs) => {
-          socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+          socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+          socket.to('ALL').emit(`${CHANNEL.CONFIRM}@start:order:response`, {
+            slug: slug, orderNumber: newOrderNumber
+          });
         });
       });
     });
   });
 
-  console.log('connect');
+  // 조리 완료
+  socket.on(`${CHANNEL.CONFIRM}@finsh:order`, slug => {
+    Orders.findOne({
+      orderDate: workDate,
+    }).exec((err, docs) => {
+      let newOrderNumber = docs.lastOrderNumber + 1;
+
+      Orders.update({ orderDate: workDate, 'orders.slug': slug }, { '$set': {
+        'orders.$.status': 'cooked'
+      }}, function(err) {
+        // 주문서 업데이트
+        Orders.findOne({
+          orderDate: workDate,
+        }).exec((err, docs) => {
+          socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+          socket.to('ALL').emit(`${CHANNEL.CONFIRM}@finish:order:response`, {
+            slug: slug, orderNumber: newOrderNumber
+          });
+        });
+      });
+    });
+  });
 
   socket.on('disconnect', () => {
     console.log('disconnect');
