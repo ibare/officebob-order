@@ -22,7 +22,7 @@ $(function() {
       return order;
     });
 
-    $('.order-list').html(template({ orders: renderData }));
+    $('.container').html(template({ orders: renderData }));
 
     $('.order.confirm').on('click', function(event) {
       socket.emit(CHANNEL.CONFIRM+'@start:order', event.target.dataset.slug);
@@ -31,6 +31,8 @@ $(function() {
     $('.order.cooked').on('click', function(event) {
       socket.emit(CHANNEL.CONFIRM+'@finsh:order', event.target.dataset.slug);
     });
+
+    $('ul.tabs').tabs();
   });
 
   socket.on(CHANNEL.ORDER+'@check:order:response', function(slug) {
