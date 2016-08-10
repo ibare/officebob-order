@@ -40,6 +40,7 @@ $(function() {
   // 예약 완료
   socket.on(CHANNEL.RESERVE+'@reserve:order:response', function(orderNumber) {
     ramenOrder.orderNumber = orderNumber;
+    $('.btn-order').text('키친에 예약 확인');
     $('.order-result>h1').text(orderNumber);
 
     setRamenOrder(ramenOrder);
@@ -47,10 +48,11 @@ $(function() {
 
   // 조리 시작
   socket.on(CHANNEL.CONFIRM+'@start:order:response', function(info) {
-    if (info.slug == slug) {
+    if (info.slug == ramenOrder.slug) {
       ramenOrder.status = 'cook';
 
-      $('.order-result>h1').text(info.orderNumber);
+      $('.btn-order').hide();
+      $('.order-result>h1').text('대기 번호 '+info.orderNumber+'번 조리중입니다.');
 
       setRamenOrder(ramenOrder);
     }

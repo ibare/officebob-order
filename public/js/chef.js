@@ -15,13 +15,36 @@ $(function() {
 
   socket.emit(CHANNEL.ORDER+'@all:orders');
   socket.on(CHANNEL.ORDER+'@update:orders:response', function(orders) {
+    var numberOfReserve = 0;
+    var numberOfCooking = 0;
+    var numberOfCooked = 0;
+
     var renderData = orders.map(function(order) {
-      order.isReserve = order.status == 'reserve';
-      order.isCooking = order.status == 'cook';
-      order.isCooked = order.status == 'cooked';
+      order.isReserve = false;
+      order.isCooking = false;
+      order.isCooked = false;
+
+      switch(order.status) {
+        case 'reserve':
+          numberOfReserve++;
+          order.isReserve = true;
+          break;
+        case 'cook':
+          numberOfCooking++;
+          order.isCooking = true;
+          break;
+        case 'cooked':
+          numberOfCooked++;
+          order.isCooked = true;
+          break;
+      }
       return order;
     });
 
+    renderData.numberOfCooked = numberOfCooked;
+    renderData.numberOfCooking = numberOfCooking;
+    renderData.numberOfReserve = numberOfReserve;
+    
     $('.container').html(template({ orders: renderData }));
 
     $('.order.confirm').on('click', function(event) {
