@@ -18,34 +18,59 @@ $(function() {
     var numberOfReserve = 0;
     var numberOfCooking = 0;
     var numberOfCooked = 0;
+    var renderData = {};
 
-    var renderData = orders.map(function(order) {
-      order.isReserve = false;
-      order.isCooking = false;
-      order.isCooked = false;
+    renderData.reserve = {
+      length: 0
+    };
 
-      switch(order.status) {
-        case 'reserve':
-          numberOfReserve++;
-          order.isReserve = true;
-          break;
-        case 'cook':
-          numberOfCooking++;
-          order.isCooking = true;
-          break;
-        case 'cooked':
-          numberOfCooked++;
-          order.isCooked = true;
-          break;
-      }
-      return order;
+    renderData.cook = {
+      length: 0
+    };
+
+    renderData.cooked = {
+      length: 0
+    };
+
+    renderData.reserve.items = orders.filter(function(order) {
+      return order.status == 'reserve';
     });
 
-    renderData.numberOfCooked = numberOfCooked;
-    renderData.numberOfCooking = numberOfCooking;
-    renderData.numberOfReserve = numberOfReserve;
-    
-    $('.container').html(template({ orders: renderData }));
+    renderData.cook.items = orders.filter(function(order) {
+      return order.status == 'cook';
+    });
+
+    renderData.cooked.items = orders.filter(function(order) {
+      return order.status == 'cooked';
+    });
+
+    // var renderData = orders.map(function(order) {
+    //   order.isReserve = false;
+    //   order.isCooking = false;
+    //   order.isCooked = false;
+    //   console.log(order.status);
+    //   switch(order.status) {
+    //     case 'reserve':
+    //       numberOfReserve++;
+    //       order.isReserve = true;
+    //       break;
+    //     case 'cook':
+    //       numberOfCooking++;
+    //       order.isCooking = true;
+    //       break;
+    //     case 'cooked':
+    //       numberOfCooked++;
+    //       order.isCooked = true;
+    //       break;
+    //   }
+    //   return order;
+    // });
+
+    renderData.reserve.length = renderData.reserve.items.length;
+    renderData.cook.length = renderData.cook.items.length;
+    renderData.cooked.length = renderData.cooked.items.length;
+
+    $('.container').html(template(renderData));
 
     $('.order.confirm').on('click', function(event) {
       socket.emit(CHANNEL.CONFIRM+'@start:order', event.target.dataset.slug);

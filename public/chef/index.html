@@ -26,31 +26,51 @@
   <div class="row">
     <div class="col s12">
       <ul class="tabs">
-        <li class="tab col s3"><a href="#reserve">예약 ({{numberOfReserve}})</a></li>
-        <li class="tab col s3"><a href="#cooking">조리중 ({{numberOfCook}})</a></li>
-        <li class="tab col s3"><a href="#cooked">완료 ({{numberOfCooked}})</a></li>
+        <li class="tab col s3"><a href="#reserve">예약 ({{reserve.length}})</a></li>
+        <li class="tab col s3"><a href="#cooking">조리중 ({{cook.length}})</a></li>
+        <li class="tab col s3"><a href="#cooked">완료 ({{cooked.length}})</a></li>
       </ul>
     </div>
     <div id="reserve" class="col s12">
       <ul class="collection">
-        {{#each orders}}
+        {{#each reserve.items}}
         <li class="collection-item slug-{{slug}}">
           <a name="slug-{{slug}}"></a>
           {{slug}}
           <span>{{status}}</span>
           <span>{{ramen1}}</span>
           <span>{{ramen2}}</span>
-          {{#if isReserve}} <a href="#" class="order confirm" data-slug="{{slug}}">조리 시작</a>{{/if}}
-          {{#if isCooking}}#{{orderNumber}} 조리중... <a href="#" class="order cooked" data-slug="{{slug}}">조리 완료</a>{{/if}}
+          <a href="#" class="order confirm push_button" data-slug="{{slug}}">조리 시작</a>
         </li>
         {{/each}}
       </ul>
     </div>
     <div id="cooking" class="col s12">
-      조리중
+      <ul class="collection">
+        {{#each cook.items}}
+        <li class="collection-item slug-{{slug}}">
+          <a name="slug-{{slug}}"></a>
+          {{slug}}
+          <span>{{status}}</span>
+          <span>{{ramen1}}</span>
+          <span>{{ramen2}}</span>
+          #{{orderNumber}} 조리중... <a href="#" class="order cooked push_button" data-slug="{{slug}}">조리 완료</a>
+        </li>
+        {{/each}}
+      </ul>
     </div>
     <div id="cooked" class="col s12">
-      완료
+      <ul class="collection">
+        {{#each cooked.items}}
+        <li class="collection-item slug-{{slug}}">
+          <a name="slug-{{slug}}"></a>
+          {{slug}}
+          <span>{{status}}</span>
+          <span>{{ramen1}}</span>
+          <span>{{ramen2}}</span>
+        </li>
+        {{/each}}
+      </ul>
     </div>
   </div>
   </div>
