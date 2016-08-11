@@ -24,7 +24,7 @@ const CHANNEL = {
 };
 
 function setToday() {
-  let today = moment().format('YYYY-MM-DD');
+  var today = moment().format('YYYY-MM-DD');
 
   if (workDate != today)
     workDate = today;
@@ -61,7 +61,7 @@ io.sockets.on('connection', socket => {
       orderDate: workDate
     }).exec((err, docs) => {
       console.log(workDate, err, docs);
-      let order = {
+      var order = {
         slug: bill.slug,
         time: bill.time,
         ramen1: bill.ramen1,
@@ -92,7 +92,7 @@ io.sockets.on('connection', socket => {
     Ramens.findOne({
       orderDate: workDate,
     }).exec((err, docs) => {
-      let newOrderNumber = docs.lastOrderNumber + 1;
+      var newOrderNumber = docs.lastOrderNumber + 1;
 
       Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
         'lastOrderNumber': newOrderNumber,
@@ -117,7 +117,7 @@ io.sockets.on('connection', socket => {
     Ramens.findOne({
       orderDate: workDate,
     }, (err, docs) => {
-      let newOrderNumber = docs.lastOrderNumber + 1;
+      var newOrderNumber = docs.lastOrderNumber + 1;
 
       Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
         'orders.$.status': 'cooked'
