@@ -15,6 +15,11 @@ function setRamenOrder(info) {
   return info;
 }
 
+$(window).on('resize', function() {
+  $('body').width($(window).width());
+  $('body').height($(window).height());
+});
+
 $(function() {
   var ramenOrder = getRamenOrder();
   var CHANNEL = {
@@ -24,6 +29,13 @@ $(function() {
   };
   var slug = null;
   var socket = io();
+
+  setTimeout(function() {
+    Materialize.toast('<div>23번 손님 라면나왔습니다.<br><img src="/images/ramen.jpg" width="100%"></div>', 3000);
+  },2000);
+
+  $('body').width($(window).width());
+  $('body').height($(window).height());
 
   if (ramenOrder) {
     $('.btn-order').text('키친에 예약 확인');

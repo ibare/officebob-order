@@ -9,6 +9,7 @@
   <title>셰프의라면</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
   <link rel="stylesheet" href="/css/default.css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
@@ -20,78 +21,144 @@
 </head>
 <body>
 <div class="container">
+
+  <ul id="slide-out" class="side-nav">
+    <li><div class="userView">
+      <img class="background" src="http://materializecss.com/images/office.jpg">
+      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+      <a href="#!name"><span class="white-text name">John Doe</span></a>
+      <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+    </div></li>
+    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+    <li><a href="#!">Second Link</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Subheader</a></li>
+    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+  </ul>
+  <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+
   <div class="row">
-    <div class="col s12 center-align">
-      <h1 class="headline" itemprop="description" style="font-size: 29px;">
-          <strong class="bold">셰프의라면</strong>
-      </h1>
-    </div>
+      <div class="col s12 center-align">
+          <h1 class="headline" itemprop="description" style="font-size: 29px;">
+              <span class="time">8월 8일</span><strong class="bold">셰프의 라면</strong><br>
+              <span class="thin">90그릇 준비했습니다</span><br>
+              <span class="warning">키친에서 결제는 필수 :-)</span><br>
+              <span class="thin min">현재 함께하는 사람은 <span class="number-of-connection">1</span>명</span>
+          </h1>
+      </div>
   </div>
+
+
   <div class="row">
-    <form class="col s12">
-      <div class="row">
-        <div class="input-field col s4">
-          <strong style="margin-left: 1em;">타임 선택</strong>
-          <p>
-            <input name="time" type="radio" value="1st" id="time-1"/>
-            <label for="time-1">4:00pm</label>
-          </p>
-          <p>
-            <input name="time" type="radio" value="2th" id="time-2" checked/>
-            <label for="time-2">4:30pm</label>
-          </p>
+    <div class="col s12 m6 l6">
+      <div class="card sticky-action large">
+         <div class="card-image waves-effect waves-block waves-light">
+           <img class="activator" src="/images/ramen.jpg">
+         </div>
+         <div class="card-content">
+           <p>현재 예약자 23명, 4그릇 조리 중</p>
+         </div>
+         <div class="card-action action-container">
+           <span class="card-title activator grey-text text-darken-3">4:00 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
+           <p>맛있는 라면을 드셔보세요. 예약제로 운영됩니다.</p>
+         </div>
+         <div class="card-reveal">
+           <span class="card-title grey-text text-darken-4">예약<i class="material-icons right">close</i></span>
+           <div class="row" style="margin-top: 30px;">
+             <div class="col s5"><span class="menu chip">파송송계란탁</span></div>
+             <div class="col s2"><span class="menu order-count chip">+1</span></div>
+             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
+             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
+             <div class="col s1"></div>
+           </div>
+           <div class="row">
+             <div class="col s5"><span class="menu chip">치즈 라면</span></div>
+             <div class="col s2"><span class="menu order-count chip">+1</span></div>
+             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
+             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
+             <div class="col s1"></div>
+           </div>
+           <div class="row" style="margin-top: 80px;">
+             <div class="col s12 center">
+               <button class="btn btn-large waves-effect waves-light" type="submit" name="action">예약
+                <i class="material-icons right">send</i>
+              </button>
+             </div>
+           </div>
+         </div>
+       </div>
+    </div>
+
+    <div class="col s12 m6 l6">
+      <div class="card sticky-action large">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img class="activator" src="/images/ramen.jpg">
         </div>
-        <div class="input-field col s4">
-          <strong>파송송계란탁</strong>
-          <p>
-            <input name="group1" type="radio" value="0" id="group1-0"/>
-            <label for="group1-0">안먹음</label>
-          </p>
-          <p>
-            <input name="group1" type="radio" value="1" id="group1-1" checked/>
-            <label for="group1-1">한그릇</label>
-          </p>
-          <p>
-            <input name="group1" type="radio" value="2" id="group1-2"/>
-            <label for="group1-2">두그릇</label>
-          </p>
-          <p>
-            <input name="group1" type="radio" value="3" id="group1-3"/>
-            <label for="group1-3">세그릇</label>
-          </p>
+        <div class="card-content">
+          <p>현재 예약자 23명, 4그릇 조리 중</p>
         </div>
-        <div class="input-field col s4">
-          <strong>치즈 라면</strong>
-          <p>
-            <input name="group2" type="radio" value="0" id="group2-0" checked/>
-            <label for="group2-0">안먹음</label>
-          </p>
-          <p>
-            <input name="group2" type="radio" value="1" id="group2-1"/>
-            <label for="group2-1">한그릇</label>
-          </p>
-          <p>
-            <input name="group2" type="radio" value="2" id="group2-2"/>
-            <label for="group2-2">두그릇</label>
-          </p>
-          <p>
-            <input name="group2" type="radio" value="3" id="group2-3"/>
-            <label for="group2-3">세그릇</label>
-          </p>
+        <div class="card-action action-container">
+          <span class="card-title activator grey-text text-darken-3">4:30 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
+          <p>맛있는 라면을 드셔보세요. 예약제로 운영됩니다.</p>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title grey-text text-darken-4">예약<i class="material-icons right">close</i></span>
+          <div class="row" style="margin-top: 30px;">
+            <div class="col s5"><span class="menu chip">파송송계란탁</span></div>
+            <div class="col s2"><span class="menu order-count chip">0</span></div>
+            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
+            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red disabled"><i class="material-icons">remove</i></a></div>
+            <div class="col s1"></div>
+          </div>
+          <div class="row">
+            <div class="col s5"><span class="menu chip">치즈 라면</span></div>
+            <div class="col s2"><span class="menu order-count chip">+1</span></div>
+            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
+            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
+            <div class="col s1"></div>
+          </div>
+          <div class="row" style="margin-top: 80px;">
+            <div class="col s12 center">
+              <button class="btn btn-large waves-effect waves-light" type="submit" name="action">예약
+               <i class="material-icons right">send</i>
+             </button>
+            </div>
+          </div>
         </div>
       </div>
-    </form>
-  </div>
-  <div class="row">
-    <div class="col s12 center-align">
-      <a href="#" class="btn btn-order">예약하기</a>
     </div>
+
   </div>
-  <div class="row">
+
+  <!-- <div class="row">
     <div class="col s12 order-result">
       <h1></h1>
     </div>
-  </div>
+  </div> -->
+
+
 </div>
+<footer class="page-footer">
+  <div class="container">
+              <div class="row">
+                <div class="col l6 s12">
+                  <h5 class="white-text">우아한 키친</h5>
+                  <p class="grey-text text-lighten-4">매주 월요일 오후 4시 셰프의 라면을 드실 수 있습니다.</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                  <h5 class="white-text">Office Bob family</h5>
+                  <ul>
+                    <li><a class="grey-text text-lighten-3" href="http://officebob.woowa.in">우아한 키친 메뉴</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2016 Copyright Woowahan Bros.
+            <a class="grey-text text-lighten-4 right" href="#!">밥상회 3기</a>
+            </div>
+          </div>
+        </footer>
 </body>
 </html>

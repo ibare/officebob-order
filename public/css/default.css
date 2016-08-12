@@ -1,5 +1,5 @@
 body {
-    /* background-image: linear-gradient(135deg, #8eaaff, #80ff84); */
+    background-image: linear-gradient(135deg, #8eaaff, #80ff84);
 }
 .headline {
     line-height: 130%;
@@ -59,16 +59,25 @@ body {
   background-color: rgba(255,0,177,0.7) !important;
 }
 
-.push_button {
+.menu {
+  font-size: 20px;
+}
+
+.menu.order-count {
+  text-align: right;
+  font-size: 24px;
+}
+
+.card-action.action-container {
+  border: none;
+}
+
+.push-button {
 	position:relative;
   font-size: 13px;
-	width:80px;
 	color:#FFF;
 	display:inline-block;
 	text-decoration:none;
-	border-radius:5px;
-	border:solid 1px #D94E3B;
-	background:#cb3b27;
 	text-align:center;
 	padding:5px 10px;
 
@@ -76,15 +85,58 @@ body {
 	-moz-transition: all 0.1s;
 	transition: all 0.1s;
 
-	-webkit-box-shadow: 0px 4px 0px #84261a;
+}
+
+.push-button.large {
+  width: 90%;
+}
+
+.push-button.blue {
+  border:solid 1px #0090d4;
+  background:#00adff;
+
+  -webkit-box-shadow: 0px 4px 0px #0076ae;
+  -moz-box-shadow: 0px 4px 0px #0076ae;
+  box-shadow: 0px 4px 0px #0076ae;
+}
+
+.push-button.yello {
+  border:solid 1px #D94E3B;
+  background:#cb3b27;
+
+  -webkit-box-shadow: 0px 4px 0px #84261a;
   -moz-box-shadow: 0px 4px 0px #84261a;
   box-shadow: 0px 4px 0px #84261a;
 }
 
-.push_button:active{
+.push-button.red {
+  border:solid 1px #D94E3B;
+	background:#cb3b27;
+
+  -webkit-box-shadow: 0px 4px 0px #84261a;
+  -moz-box-shadow: 0px 4px 0px #84261a;
+  box-shadow: 0px 4px 0px #84261a;
+}
+
+.push-button:active{
+    position:relative;
+    top:3px;
+}
+
+.push-button.blue:active{
+    -webkit-box-shadow: 0px 2px 0px #0076ae;
+    -moz-box-shadow: 0px 2px 0px #0076ae;
+    box-shadow: 0px 2px 0px #0076ae;
+}
+
+.push-button.yellow:active{
     -webkit-box-shadow: 0px 2px 0px #84261a;
     -moz-box-shadow: 0px 2px 0px #84261a;
     box-shadow: 0px 2px 0px #84261a;
-    position:relative;
-    top:3px;
+}
+
+.push-button.red:active{
+    -webkit-box-shadow: 0px 2px 0px #84261a;
+    -moz-box-shadow: 0px 2px 0px #84261a;
+    box-shadow: 0px 2px 0px #84261a;
 }
