@@ -52,6 +52,7 @@ io.sockets.on('connection', socket => {
       orderDate: workDate
     }).exec((err, docs) => {
       socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+      socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
     });
   });
 
@@ -76,6 +77,7 @@ io.sockets.on('connection', socket => {
         // 신규 예약 번호 응답
         socket.emit(`${CHANNEL.RESERVE}@reserve:order:response`, bill.slug);
         // 주문서 업데이트
+        socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
         socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
       });
     });
@@ -104,6 +106,7 @@ io.sockets.on('connection', socket => {
           orderDate: workDate,
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+          socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.CONFIRM}@start:order:response`, {
             slug: slug, orderNumber: newOrderNumber
           });
@@ -127,6 +130,7 @@ io.sockets.on('connection', socket => {
           orderDate: workDate,
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
+          socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.CONFIRM}@finish:order:response`, {
             slug: slug, orderNumber: newOrderNumber
           });

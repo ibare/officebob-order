@@ -1,4 +1,16 @@
 var SAVEID = 'ramenOrder-'+moment().format('YYYY-MM-DD');
+var TodayOrderStatus = {
+  '1st': {
+    reserve: 0,
+    cook: 0,
+    cooked: 0
+  },
+  '2th': {
+    reserve: 0,
+    cook: 0,
+    cooked: 0
+  }
+}
 
 function getRamenOrder() {
   var ramenOrder = window.localStorage.getItem(SAVEID);
@@ -92,12 +104,30 @@ $(function() {
 
   activateBoard(ramenOrder);
 
+  // 전체(or 변경 내역 있을 때 마다) 주문 내역 수신
+  socket.on(CHANNEL.ORDER+'@update:orders:response', function(orders) {
+    ['1st','2th'].forEach(function(t) {
+      TodayOrderStatus[t].reserve = 0;
+      TodayOrderStatus[t].cook = 0;
+      TodayOrderStatus[t].cooked = 0;
+    });
+
+    orders.forEach(function(order) {
+      TodayOrderStatus[order.time][order.status]++;
+    });
+
+    $('.1st-info').text('현재 예약자 '+TodayOrderStatus['1st'].reserve+' 명, '+ TodayOrderStatus['1st'].cook +' 명 조리중');
+    $('.2th-info').text('현재 예약자 '+TodayOrderStatus['2th'].reserve+' 명, '+ TodayOrderStatus['2th'].cook +' 명 조리중');
+  });
+
   // 예약 완료
   socket.on(CHANNEL.RESERVE+'@reserve:order:response', function(orderNumber) {
     ramenOrder.orderNumber = orderNumber;
 
     setRamenOrder(ramenOrder);
     activateBoard(ramenOrder);
+
+    swal("성공", "예약이 완료되었습니다. 시간에 맞춰 키친에서 결제 후 맛있게 드십시오.", "success");
   });
 
   // 조리 시작
@@ -130,6 +160,8 @@ $(function() {
     var current = $('.order-count[data-time='+data.time+'][data-menu='+data.menu+']');
 
     current.text('+'+(+current.text()+1));
+    $('.btn.btn-reserve[data-time='+data.time+']').removeClass('disabled');
+    return false;
   });
 
   // 라면 수량 취소
@@ -137,39 +169,66 @@ $(function() {
     var data = event.currentTarget.dataset;
     var current = $('.order-count[data-time='+data.time+'][data-menu='+data.menu+']');
 
-    if(+current.text() == 0) return;
-    if(+current.text() == 1) {
+    if(+current.text() <= 1) {
       current.text(0);
-    } else {
-      current.text('+'+(+current.text()-1));
+
+      var ramen1 = +$('.order-count[data-time='+data.time+'][data-menu=basic]').text();
+      var ramen2 = +$('.order-count[data-time='+data.time+'][data-menu=cheese]').text();
+
+      if (ramen1 == 0 && ramen2 == 0) {
+        $('.btn.btn-reserve[data-time='+data.time+']').addClass('disabled');
+      }
+
+      return false;
     }
+
+    current.text('+'+(+current.text()-1));
+    return false;
   });
 
   // 예약 요청
   $('.btn-reserve').on('click', function(event) {
-    var time = event.currentTarget.dataset.time;
-    var group1 = +$('.order-count[data-time='+time+'][data-menu=basic]').text();
-    var group2 = +$('.order-count[data-time='+time+'][data-menu=cheese]').text();
-    var min = 1000;
-    var max = 9999;
+    swal({
+      title: "예약하시겠습니까?",
+      text: "예약 후 조리 시작 전까지는 취소할 수 있습니다.",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText: "아니요",
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "예약합니다.",
+      closeOnConfirm: false,
+      closeOnCancel: false
+    }, function(isConfirm) {
+      if (isConfirm) {
+        var time = event.currentTarget.dataset.time;
+        var group1 = +$('.order-count[data-time='+time+'][data-menu=basic]').text();
+        var group2 = +$('.order-count[data-time='+time+'][data-menu=cheese]').text();
+        var min = 1000;
+        var max = 9999;
 
-    slug = Math.floor(Math.random()*(max-min+1)+min);
+        slug = Math.floor(Math.random()*(max-min+1)+min);
 
-    ramenOrder = setRamenOrder({
-      slug: slug,
-      orderNumber: 0,
-      time: time,
-      ramen1: group1,
-      ramen2: group2,
-      status: 'reserve'
+        ramenOrder = setRamenOrder({
+          slug: slug,
+          orderNumber: 0,
+          time: time,
+          ramen1: group1,
+          ramen2: group2,
+          status: 'reserve'
+        });
+
+        socket.emit(`${CHANNEL.ORDER}@reserve:order`, {
+          slug: slug,
+          time: time,
+          ramen1: group1,
+          ramen2: group2
+        });
+      } else {
+        swal("취소", "아쉽네요. 라면 한 그릇 정도 드실 수 있잖아요?", "error");
+      }
     });
 
-    socket.emit(`${CHANNEL.ORDER}@reserve:order`, {
-      slug: slug,
-      time: time,
-      ramen1: group1,
-      ramen2: group2
-    });
+    return false;
   });
 
   $('.check-reserve-signal').on('click', function(event) {
@@ -180,5 +239,10 @@ $(function() {
     setTimeout(function() {
       Materialize.toast('키친에 예약 확인을 요청했습니다', 2000);
     },200);
+
+    return false;
   });
+
+  // 전체 주문 상태 요청
+  socket.emit(CHANNEL.ORDER+'@all:orders');
 });

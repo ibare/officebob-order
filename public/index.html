@@ -21,27 +21,31 @@
 </head>
 <body>
 <div class="container">
-
   <div class="row">
       <div class="col s12 center-align">
-          <h1 class="headline" itemprop="description" style="font-size: 29px;">
-              <span class="time">8월 22일</span><strong class="bold">셰프의 라면</strong><br>
-              <span class="thin">90그릇 준비했습니다</span><br>
-              <span class="warning">키친에서 결제는 필수 :-)</span><br>
-              <span class="thin min">현재 함께하는 사람은 <span class="number-of-connection">1</span>명</span>
+          <h1 itemprop="description" style="font-size: 29px;">
+              <span class="time">8월 22일</span><strong class="bold">셰프의 라면</strong>
           </h1>
       </div>
   </div>
 
-
   <div id="order-board" class="row" style="display:none">
+    <div class="row">
+        <div class="col s12 center-align">
+            <h2 style="font-size: 29px;">
+                <span class="thin">90그릇 준비했습니다</span><br>
+                <span class="warning">키친에서 결제는 필수 :-)</span><br>
+            </h2>
+        </div>
+    </div>
+
     <div class="col s12 m6 l6">
       <div class="card sticky-action large">
          <div class="card-image waves-effect waves-block waves-light">
            <img class="activator" src="/images/ramen.jpg">
          </div>
          <div class="card-content">
-           <p>현재 예약자 23명, 4그릇 조리 중</p>
+           <p class="1st-info"></p>
          </div>
          <div class="card-action action-container">
            <span class="card-title activator grey-text text-darken-3">4:00 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
@@ -63,7 +67,7 @@
            </div>
            <div class="row" style="margin-top: 80px;">
              <div class="col s12 center">
-               <button class="btn btn-reserve btn-large waves-effect waves-light" data-time="1st">예약
+               <button class="btn btn-reserve btn-large waves-effect waves-light disabled" data-time="1st">예약
                 <i class="material-icons right">send</i>
               </button>
              </div>
@@ -78,7 +82,7 @@
           <img class="activator" src="/images/ramen.jpg">
         </div>
         <div class="card-content">
-          <p>현재 예약자 23명, 4그릇 조리 중</p>
+          <p class="2th-info"></p>
         </div>
         <div class="card-action action-container">
           <span class="card-title activator grey-text text-darken-3">4:30 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
@@ -100,7 +104,7 @@
           </div>
           <div class="row" style="margin-top: 80px;">
             <div class="col s12 center">
-              <button class="btn btn-reserve btn-large waves-effect waves-light" data-time="2th">예약
+              <button class="btn btn-reserve btn-large waves-effect waves-light disabled" data-time="2th">예약
                <i class="material-icons right">send</i>
              </button>
             </div>
@@ -112,6 +116,15 @@
   </div>
 
   <div id="reserve-board" class="row" style="display:none">
+    <div class="row">
+        <div class="col s12 center-align">
+            <h1 class="headline" itemprop="description" style="font-size: 29px;">
+                <span class="thin">90그릇 준비했습니다</span><br>
+                <span class="warning">키친에서 결제는 필수 :-)</span><br>
+            </h1>
+        </div>
+    </div>
+
     <div class="col s12 center-align">
         <h1 class="headline" itemprop="description" style="font-size: 29px;">
           예약 번호 <span class="reserve-no"></span>
@@ -119,32 +132,17 @@
         <p>
           <strong class="bold"><span class="ramen-text"></span> 주문하셨습니다.</strong><br>
         </p>
-        <button class="check-reserve-signal btn btn-check-reserve btn-medium waves-effect waves-light">예약 확인
-          <i class="material-icons right">check</i>
-        </button>
-        <button class="cancel-reserve btn btn-check-reserve btn-medium waves-effect waves-light red">예약 취소
-          <i class="material-icons right">cancel</i>
-        </button>
-
+        <div style="margin-bottom: 1em;">
+          <button class="check-reserve-signal btn btn-check-reserve btn-large waves-effect waves-light">예약 확인
+            <i class="material-icons right">check</i>
+          </button>
+        </div>
+        <div>
+          <button class="cancel-reserve btn btn-check-reserve btn-large waves-effect waves-light red">예약 취소
+            <i class="material-icons right">remove</i>
+          </button>
+        </div>
     </div>
-  </div>
-
-  <div id="reserve-board" class="row" style="display:none">
-    <div class="col s12 center-align">
-      <h1 class="headline" itemprop="description" style="font-size: 29px;">
-        예약 번호 <span class="reserve-no"></span>
-      </h1>
-      <p>
-        <strong class="bold"><span class="ramen-text"></span> 주문하셨습니다.</strong><br>
-      </p>
-      <button class="check-reserve-signal btn btn-check-reserve btn-medium waves-effect waves-light">예약 확인
-        <i class="material-icons right">check</i>
-      </button>
-      <button class="cancel-reserve btn btn-check-reserve btn-medium waves-effect waves-light red">예약 취소
-        <i class="material-icons right">cancel</i>
-      </button>
-    </div>
-
   </div>
 
   <div id="cooking-board" class="row" style="display:none">
@@ -170,6 +168,12 @@
       </h1>
       <p>
         <strong class="bold"><span class="ramen-text"></span>라면이 나왔습니다.</strong><br>
+      </p>
+
+      <p style="margin-top: 3em;">
+        <button class="btn btn-finish-eat btn-large waves-effect waves-light green">잘 먹었습니다
+          <i class="material-icons right">done</i>
+        </button>
       </p>
     </div>
   </div>
