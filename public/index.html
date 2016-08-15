@@ -22,25 +22,10 @@
 <body>
 <div class="container">
 
-  <ul id="slide-out" class="side-nav">
-    <li><div class="userView">
-      <img class="background" src="http://materializecss.com/images/office.jpg">
-      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
-      <a href="#!name"><span class="white-text name">John Doe</span></a>
-      <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
-    </div></li>
-    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-    <li><a href="#!">Second Link</a></li>
-    <li><div class="divider"></div></li>
-    <li><a class="subheader">Subheader</a></li>
-    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
-  </ul>
-  <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
-
   <div class="row">
       <div class="col s12 center-align">
           <h1 class="headline" itemprop="description" style="font-size: 29px;">
-              <span class="time">8월 8일</span><strong class="bold">셰프의 라면</strong><br>
+              <span class="time">8월 22일</span><strong class="bold">셰프의 라면</strong><br>
               <span class="thin">90그릇 준비했습니다</span><br>
               <span class="warning">키친에서 결제는 필수 :-)</span><br>
               <span class="thin min">현재 함께하는 사람은 <span class="number-of-connection">1</span>명</span>
@@ -49,7 +34,7 @@
   </div>
 
 
-  <div class="row">
+  <div id="order-board" class="row" style="display:none">
     <div class="col s12 m6 l6">
       <div class="card sticky-action large">
          <div class="card-image waves-effect waves-block waves-light">
@@ -65,22 +50,20 @@
          <div class="card-reveal">
            <span class="card-title grey-text text-darken-4">예약<i class="material-icons right">close</i></span>
            <div class="row" style="margin-top: 30px;">
-             <div class="col s5"><span class="menu chip">파송송계란탁</span></div>
-             <div class="col s2"><span class="menu order-count chip">+1</span></div>
-             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
-             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
-             <div class="col s1"></div>
+             <div class="col s5"><span class="menu chip">파송송</span></div>
+             <div class="col s3"><span class="menu order-count chip" data-time="1st" data-menu="basic">0</span></div>
+             <div class="col s2"><a href="#" class="btn-add btn-floating btn-medium waves-effect waves-light blue" data-time="1st" data-menu="basic"><i class="material-icons">add</i></a></div>
+             <div class="col s2"><a href="#" class="btn-remove btn-floating btn-medium waves-effect waves-light red" data-time="1st" data-menu="basic"><i class="material-icons">remove</i></a></div>
            </div>
            <div class="row">
-             <div class="col s5"><span class="menu chip">치즈 라면</span></div>
-             <div class="col s2"><span class="menu order-count chip">+1</span></div>
-             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
-             <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
-             <div class="col s1"></div>
+             <div class="col s5"><span class="menu chip">치즈라면</span></div>
+             <div class="col s3"><span class="menu order-count chip" data-time="1st" data-menu="cheese">0</span></div>
+             <div class="col s2"><a href="#" class="btn-add btn-floating btn-medium waves-effect waves-light blue" data-time="1st" data-menu="cheese"><i class="material-icons">add</i></a></div>
+             <div class="col s2"><a href="#" class="btn-remove btn-floating btn-medium waves-effect waves-light red" data-time="1st" data-menu="cheese"><i class="material-icons">remove</i></a></div>
            </div>
            <div class="row" style="margin-top: 80px;">
              <div class="col s12 center">
-               <button class="btn btn-large waves-effect waves-light" type="submit" name="action">예약
+               <button class="btn btn-reserve btn-large waves-effect waves-light" data-time="1st">예약
                 <i class="material-icons right">send</i>
               </button>
              </div>
@@ -104,22 +87,20 @@
         <div class="card-reveal">
           <span class="card-title grey-text text-darken-4">예약<i class="material-icons right">close</i></span>
           <div class="row" style="margin-top: 30px;">
-            <div class="col s5"><span class="menu chip">파송송계란탁</span></div>
-            <div class="col s2"><span class="menu order-count chip">0</span></div>
-            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
-            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red disabled"><i class="material-icons">remove</i></a></div>
-            <div class="col s1"></div>
+            <div class="col s5"><span class="menu chip">파송송</span></div>
+            <div class="col s3"><span class="menu order-count chip" data-time="2th" data-menu="basic">0</span></div>
+            <div class="col s2"><a href="#" class="btn-add btn-floating btn-medium waves-effect waves-light blue" data-time="2th" data-menu="basic"><i class="material-icons">add</i></a></div>
+            <div class="col s2"><a href="#" class="btn-remove btn-floating btn-medium waves-effect waves-light red" data-time="2th" data-menu="basic"><i class="material-icons">remove</i></a></div>
           </div>
           <div class="row">
-            <div class="col s5"><span class="menu chip">치즈 라면</span></div>
-            <div class="col s2"><span class="menu order-count chip">+1</span></div>
-            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light blue"><i class="material-icons">add</i></a></div>
-            <div class="col s2"><a class="btn-floating btn-medium waves-effect waves-light red"><i class="material-icons">remove</i></a></div>
-            <div class="col s1"></div>
+            <div class="col s5"><span class="menu chip">치즈라면</span></div>
+            <div class="col s3"><span class="menu order-count chip" data-time="2th" data-menu="cheese">0</span></div>
+            <div class="col s2"><a href="#" class="btn-add btn-floating btn-medium waves-effect waves-light blue" data-time="2th" data-menu="cheese"><i class="material-icons">add</i></a></div>
+            <div class="col s2"><a href="#" class="btn-remove btn-floating btn-medium waves-effect waves-light red" data-time="2th" data-menu="cheese"><i class="material-icons">remove</i></a></div>
           </div>
           <div class="row" style="margin-top: 80px;">
             <div class="col s12 center">
-              <button class="btn btn-large waves-effect waves-light" type="submit" name="action">예약
+              <button class="btn btn-reserve btn-large waves-effect waves-light" data-time="2th">예약
                <i class="material-icons right">send</i>
              </button>
             </div>
@@ -130,35 +111,69 @@
 
   </div>
 
-  <!-- <div class="row">
-    <div class="col s12 order-result">
-      <h1></h1>
-    </div>
-  </div> -->
+  <div id="reserve-board" class="row" style="display:none">
+    <div class="col s12 center-align">
+        <h1 class="headline" itemprop="description" style="font-size: 29px;">
+          예약 번호 <span class="reserve-no"></span>
+        </h1>
+        <p>
+          <strong class="bold"><span class="ramen-text"></span> 주문하셨습니다.</strong><br>
+        </p>
+        <button class="check-reserve-signal btn btn-check-reserve btn-medium waves-effect waves-light">예약 확인
+          <i class="material-icons right">check</i>
+        </button>
+        <button class="cancel-reserve btn btn-check-reserve btn-medium waves-effect waves-light red">예약 취소
+          <i class="material-icons right">cancel</i>
+        </button>
 
+    </div>
+  </div>
+
+  <div id="reserve-board" class="row" style="display:none">
+    <div class="col s12 center-align">
+      <h1 class="headline" itemprop="description" style="font-size: 29px;">
+        예약 번호 <span class="reserve-no"></span>
+      </h1>
+      <p>
+        <strong class="bold"><span class="ramen-text"></span> 주문하셨습니다.</strong><br>
+      </p>
+      <button class="check-reserve-signal btn btn-check-reserve btn-medium waves-effect waves-light">예약 확인
+        <i class="material-icons right">check</i>
+      </button>
+      <button class="cancel-reserve btn btn-check-reserve btn-medium waves-effect waves-light red">예약 취소
+        <i class="material-icons right">cancel</i>
+      </button>
+    </div>
+
+  </div>
+
+  <div id="cooking-board" class="row" style="display:none">
+    <div class="col s12 center-align">
+      <i class="fa fa-clock-o fa-5x"></i>
+
+      <h1 class="headline" itemprop="description" style="font-size: 29px;">
+        대기 번호 <span class="wati-order-no"></span>
+      </h1>
+      <p>
+        <strong class="bold"><span class="ramen-text"></span> 조리중입니다.</strong><br>
+      </p>
+
+    </div>
+  </div>
+
+  <div id="cooked-board" class="row" style="display:none">
+    <div class="col s12 center-align">
+      <i class="fa fa-check fa-5x"></i>
+
+      <h1 class="headline" itemprop="description" style="font-size: 29px;">
+        대기 번호 <span class="wati-order-no"></span>
+      </h1>
+      <p>
+        <strong class="bold"><span class="ramen-text"></span>라면이 나왔습니다.</strong><br>
+      </p>
+    </div>
+  </div>
 
 </div>
-<footer class="page-footer">
-  <div class="container">
-              <div class="row">
-                <div class="col l6 s12">
-                  <h5 class="white-text">우아한 키친</h5>
-                  <p class="grey-text text-lighten-4">매주 월요일 오후 4시 셰프의 라면을 드실 수 있습니다.</p>
-                </div>
-                <div class="col l4 offset-l2 s12">
-                  <h5 class="white-text">Office Bob family</h5>
-                  <ul>
-                    <li><a class="grey-text text-lighten-3" href="http://officebob.woowa.in">우아한 키친 메뉴</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          <div class="footer-copyright">
-            <div class="container">
-            © 2016 Copyright Woowahan Bros.
-            <a class="grey-text text-lighten-4 right" href="#!">밥상회 3기</a>
-            </div>
-          </div>
-        </footer>
 </body>
 </html>
