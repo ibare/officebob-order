@@ -51,6 +51,7 @@ io.sockets.on('connection', socket => {
     Ramens.findOne({
       orderDate: workDate
     }).exec((err, docs) => {
+      console.log('@update:orders:response');
       socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
       socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
     });

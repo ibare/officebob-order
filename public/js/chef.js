@@ -4,6 +4,7 @@ function blinker() {
 }
 
 $(function() {
+  var lastTabId = '';
   var template = Handlebars.compile($("#orders-template").html());
   var CHANNEL = {
     RESERVE: 'channel:reserve',
@@ -44,28 +45,6 @@ $(function() {
       return order.status == 'cooked';
     });
 
-    // var renderData = orders.map(function(order) {
-    //   order.isReserve = false;
-    //   order.isCooking = false;
-    //   order.isCooked = false;
-    //   console.log(order.status);
-    //   switch(order.status) {
-    //     case 'reserve':
-    //       numberOfReserve++;
-    //       order.isReserve = true;
-    //       break;
-    //     case 'cook':
-    //       numberOfCooking++;
-    //       order.isCooking = true;
-    //       break;
-    //     case 'cooked':
-    //       numberOfCooked++;
-    //       order.isCooked = true;
-    //       break;
-    //   }
-    //   return order;
-    // });
-
     renderData.reserve.length = renderData.reserve.items.length;
     renderData.cook.length = renderData.cook.items.length;
     renderData.cooked.length = renderData.cooked.items.length;
@@ -73,18 +52,28 @@ $(function() {
     $('.container').html(template(renderData));
 
     $('.order.confirm').on('click', function(event) {
+      lastTabId = 'reserve';
       socket.emit(CHANNEL.CONFIRM+'@start:order', event.target.dataset.slug);
     });
 
     $('.order.cooked').on('click', function(event) {
+      lastTabId = 'cooking';
       socket.emit(CHANNEL.CONFIRM+'@finsh:order', event.target.dataset.slug);
     });
 
     $('ul.tabs').tabs();
+    $('.collapsible').collapsible({ accordion : false });
+    $('ul.tabs').tabs('select_tab', lastTabId || 'reserve');
   });
 
   socket.on(CHANNEL.ORDER+'@check:order:response', function(slug) {
-    $('.slug-'+slug).addClass('blink');
-    setTimeout(function() { $('.slug-'+slug).removeClass('blink') }, 1000);
+    lastTabId = 'reserve';
+    $('ul.tabs').tabs('select_tab', lastTabId);
+
+    $('#reserve .collapsible li.active .collapsible-body').hide();
+    $('#reserve .collapsible li.active').removeClass('active');
+
+    $('#reserve .collapsible li.slug-'+slug).addClass('active');
+    $('#reserve .collapsible li.slug-'+slug+' .collapsible-body').show();
   });
 });
