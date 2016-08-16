@@ -27,6 +27,10 @@ function setRamenOrder(info) {
   return info;
 }
 
+function clearRamenOrder() {
+  window.localStorage.removeItem(SAVEID);
+}
+
 function activateBoard(order) {
   if (order) {
     switch(order.status) {
@@ -69,14 +73,11 @@ function activateBoard(order) {
         $('.wati-order-no').text(order.orderNumber);
         break;
     }
-    //
-    // if (ramenOrder.orderNumber > 0) {
-    //   $('.order-result>h1').text(ramenOrder.orderNumber);
-    // } else {
-    //   $('.order-result>h1').text(ramenOrder.slug);
-    // }
   } else {
     $('#order-board').show();
+    $('#reserve-board').hide();
+    $('#cooking-board').hide();
+    $('#cooked-board').hide();
   }
 }
 
@@ -94,10 +95,6 @@ $(function() {
   };
   var slug = null;
   var socket = io();
-
-  // setTimeout(function() {
-  //   Materialize.toast('<div>23번 손님 라면나왔습니다.<br><img src="/images/ramen.jpg" width="100%"></div>', 3000);
-  // },2000);
 
   $('body').width($(window).width());
   $('body').height($(window).height());
@@ -188,24 +185,28 @@ $(function() {
 
   // 예약 요청
   $('.btn-reserve').on('click', function(event) {
+    var time = event.currentTarget.dataset.time;
+    var group1 = +$('.order-count[data-time='+time+'][data-menu=basic]').text();
+    var group2 = +$('.order-count[data-time='+time+'][data-menu=cheese]').text();
+    var min = 1000;
+    var max = 9999;
+
+    if (group1 == 0 && group2 == 0) {
+      return false;
+    }
+
     swal({
       title: "예약하시겠습니까?",
       text: "예약 후 조리 시작 전까지는 취소할 수 있습니다.",
       type: "warning",
       showCancelButton: true,
       cancelButtonText: "아니요",
-      confirmButtonColor: "#DD6B55",
+      confirmButtonColor: "#5dc2f1",
       confirmButtonText: "예약합니다.",
       closeOnConfirm: false,
       closeOnCancel: false
     }, function(isConfirm) {
       if (isConfirm) {
-        var time = event.currentTarget.dataset.time;
-        var group1 = +$('.order-count[data-time='+time+'][data-menu=basic]').text();
-        var group2 = +$('.order-count[data-time='+time+'][data-menu=cheese]').text();
-        var min = 1000;
-        var max = 9999;
-
         slug = Math.floor(Math.random()*(max-min+1)+min);
 
         ramenOrder = setRamenOrder({
@@ -239,6 +240,42 @@ $(function() {
     setTimeout(function() {
       Materialize.toast('키친에 예약 확인을 요청했습니다', 2000);
     },200);
+
+    return false;
+  });
+
+  $('.cancel-reserve').on('click', function(event) {
+    swal({
+      title: "예약을 취소하시겠습니까?",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText: "아니요",
+      confirmButtonColor: "red",
+      confirmButtonText: "취소합니다",
+      closeOnConfirm: false
+    }, function() {
+      clearRamenOrder();
+
+      ramenOrder = getRamenOrder();
+      slug = null;
+
+      swal('확인', '취소되었습니다.', "success");
+
+      activateBoard(ramenOrder);
+    });
+
+    return false;
+  });
+
+  $('.btn-finish-eat').on('click', function(event) {
+    clearRamenOrder();
+
+    Materialize.toast('감사합니다.', 2000, '', function() {
+      ramenOrder = getRamenOrder();
+      slug = null;
+
+      activateBoard(ramenOrder);
+    });
 
     return false;
   });
