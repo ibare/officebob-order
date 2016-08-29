@@ -159,6 +159,19 @@ $(function() {
     }
   });
 
+  /**
+   * 주문 정보 수진
+   */
+  socket.on(CHANNEL.ORDER+'@checkcook:order:response', function(order) {
+    if (typeof order == 'string') {
+      swal('주문에 문제가 생겼습니다. 주방에 확인해주세요!');
+    } else {
+      if (order.status == 'cook') {
+        Materialize.toast('아직 조리중입니다.', 3000);
+      }
+    }
+  });
+
   // 라면 수량 추가
   $('.btn-add').on('click', function(event) {
     var data = event.currentTarget.dataset;
@@ -260,6 +273,7 @@ $(function() {
     return false;
   });
 
+  // 예약 취소
   $('.cancel-reserve').on('click', function(event) {
     swal({
       title: "예약을 취소하시겠습니까?",
@@ -281,6 +295,15 @@ $(function() {
     });
 
     return false;
+  });
+
+  // 조리중 확인 요청
+  $('.ckeck-cook').on('click', function(event) {
+    socket.emit(`${CHANNEL.ORDER}@ckeckcook:order`, ramenOrder.slug);
+
+    setTimeout(function() {
+      Materialize.toast('키친에 조리 상태 확인 요청을 했습니다.', 2000);
+    },200);
   });
 
   $('.btn-finish-eat').on('click', function(event) {

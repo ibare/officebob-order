@@ -116,6 +116,32 @@ io.sockets.on('connection', socket => {
     });
   });
 
+  // 조리 상태 확인 요청
+  socket.on(`${CHANNEL.ORDER}@ckeckcook:order`, slug => {
+    console.log('@checkcook:order', slug);
+    Ramens.findOne({
+      orderDate: workDate,
+    }).exec((err, docs) => {
+      var isFind = false;
+      docs.orders.forEach(order => {
+        if (order.slug == slug) {
+          isFind = true;
+          if (order.status == 'cooked') {
+            socket.emit(`${CHANNEL.CONFIRM}@finish:order:response`, {
+              slug: slug, orderNumber: order.orderNumber
+            });
+          } else {
+            socket.emit(`${CHANNEL.ORDER}@checkcook:order:response`, order);
+          }
+        }
+      });
+
+      if (!isFind) {
+        socket.emit(`${CHANNEL.ORDER}@checkcook:order:response`, 'not found');
+      }
+    });
+  });
+
   // 조리 완료
   socket.on(`${CHANNEL.CONFIRM}@finsh:order`, slug => {
     Ramens.findOne({
