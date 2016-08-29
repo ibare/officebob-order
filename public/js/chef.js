@@ -33,6 +33,8 @@ $(function() {
       length: 0
     };
 
+    renderData.cookedDish = 0;
+
     renderData.reserve.items = orders.filter(function(order) {
       return order.status == 'reserve';
     });
@@ -55,6 +57,9 @@ $(function() {
 
     if (renderData.cooked.items.length > 0) {
       renderData.cooked.items = _.sortBy(renderData.cooked.items, 'orderNumber');
+      renderData.cooked.items.forEach(function(order) {
+        renderData.cookedDish = renderData.cookedDish + (order.ramen1 + order.ramen2);
+      });
     }
 
     $('.container').html(template(renderData));
