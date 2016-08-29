@@ -49,6 +49,14 @@ $(function() {
     renderData.cook.length = renderData.cook.items.length;
     renderData.cooked.length = renderData.cooked.items.length;
 
+    if (renderData.cook.items.length > 0) {
+      renderData.cook.items = _.sortBy(renderData.cook.items, 'orderNumber');
+    }
+
+    if (renderData.cooked.items.length > 0) {
+      renderData.cooked.items = _.sortBy(renderData.cooked.items, 'orderNumber');
+    }
+
     $('.container').html(template(renderData));
 
     $('.order.confirm').on('click', function(event) {
@@ -67,13 +75,13 @@ $(function() {
   });
 
   socket.on(CHANNEL.ORDER+'@check:order:response', function(slug) {
-    lastTabId = 'reserve';
+    lastTabId = 'cooking';
     $('ul.tabs').tabs('select_tab', lastTabId);
 
-    $('#reserve .collapsible li.active .collapsible-body').hide();
-    $('#reserve .collapsible li.active').removeClass('active');
+    $('#cooking .collapsible li.active .collapsible-body').hide();
+    $('#cooking .collapsible li.active').removeClass('active');
 
-    $('#reserve .collapsible li.slug-'+slug).addClass('active');
-    $('#reserve .collapsible li.slug-'+slug+' .collapsible-body').show();
+    $('#cooking .collapsible li.slug-'+slug).addClass('active');
+    $('#cooking .collapsible li.slug-'+slug+' .collapsible-body').show();
   });
 });

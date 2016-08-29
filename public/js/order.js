@@ -31,6 +31,10 @@ function clearRamenOrder() {
   window.localStorage.removeItem(SAVEID);
 }
 
+function isDesktop() {
+  return window.screen.width >= 960;
+}
+
 function activateBoard(order) {
   if (order) {
     switch(order.status) {
@@ -44,17 +48,17 @@ function activateBoard(order) {
         var ramenText;
 
         if (order.ramen1 > 0 && order.ramen2 > 0) {
-          ramenText = '파송송계란탁 라면 '+order.ramen1+' 그릇, 치즈 라면 '+order.ramen2+' 그릇';
+          ramenText = '파송송 라면 '+order.ramen1+' 그릇<br>치즈 라면 '+order.ramen2+' 그릇';
         } else {
           if (order.ramen1 > 0) {
-            ramenText = '파송송계란탁 라면 '+order.ramen1+' 그릇';
+            ramenText = '파송송 라면 '+order.ramen1+' 그릇';
           } else {
             ramenText = '치즈 라면 '+order.ramen2+' 그릇';
           }
         }
 
         $('.reserve-no').text(order.slug)
-        $('.ramen-text').text(ramenText);
+        $('.ramen-text').html(ramenText);
         break;
       case 'cook':
         $('#reserve-board').hide();
@@ -81,10 +85,12 @@ function activateBoard(order) {
   }
 }
 
-$(window).on('resize', function() {
+function setWindowSize() {
   $('body').width($(window).width());
-  $('body').height($(window).height());
-});
+  $('body').height($(window).height()+100);
+}
+
+$(window).on('resize', setWindowSize);
 
 $(function() {
   var ramenOrder = getRamenOrder();
@@ -96,9 +102,11 @@ $(function() {
   var slug = null;
   var socket = io();
 
-  $('body').width($(window).width());
-  $('body').height($(window).height());
+  if (isDesktop()) {
+    swal('스마트폰에서 진행해 주시기 바랍니다. 예약과 주문을 같은 브라우저에서 진행해 주셔야합니다.');
+  }
 
+  setWindowSize();
   activateBoard(ramenOrder);
 
   // 전체(or 변경 내역 있을 때 마다) 주문 내역 수신
@@ -124,7 +132,7 @@ $(function() {
     setRamenOrder(ramenOrder);
     activateBoard(ramenOrder);
 
-    swal("성공", "예약이 완료되었습니다. 시간에 맞춰 키친에서 결제 후 맛있게 드십시오.", "success");
+    swal("성공", "예약이 완료되었습니다. 시간에 맞춰 키친에서 반드시 식권대장으로 결제 후 맛있게 드십시오.", "success");
   });
 
   // 조리 시작
@@ -197,8 +205,7 @@ $(function() {
 
     swal({
       title: "예약하시겠습니까?",
-      text: "예약 후 조리 시작 전까지는 취소할 수 있습니다.",
-      type: "warning",
+      text: "예약하신 후 예약하신 시간에 키친에 내려가 식권대장으로 결제 후 라면을 드실 수 있습니다.",
       showCancelButton: true,
       cancelButtonText: "아니요",
       confirmButtonColor: "#5dc2f1",
@@ -233,13 +240,22 @@ $(function() {
   });
 
   $('.check-reserve-signal').on('click', function(event) {
-    socket.emit(`${CHANNEL.ORDER}@confirm:order`, {
-      slug: ramenOrder.slug
-    });
+    swal({
+      title: "식권대장으로 결제하셨습니까?",
+      showCancelButton: true,
+      cancelButtonText: "아니요",
+      confirmButtonColor: "#5dc2f1",
+      confirmButtonText: "예!",
+      closeOnConfirm: true
+    }, function() {
+      socket.emit(`${CHANNEL.ORDER}@confirm:order`, {
+        slug: ramenOrder.slug
+      });
 
-    setTimeout(function() {
-      Materialize.toast('키친에 예약 확인을 요청했습니다', 2000);
-    },200);
+      setTimeout(function() {
+        Materialize.toast('키친에 결제 완료를 알렸습니다. 주문 확인 후 조리가 시작됩니다.', 2000);
+      },200);
+    });
 
     return false;
   });
