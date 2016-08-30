@@ -1,7 +1,6 @@
 var fs = require('fs');
 var lod = require('lodash');
 var moment = require('moment');
-var fabric = require('fabric').fabric;
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
