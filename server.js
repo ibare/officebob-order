@@ -6,7 +6,7 @@ var server = require('http').Server(app);
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var io = require('socket.io')(server);
-var mongodb = null;
+var isConnectMongo = false;
 var workDate = moment().format('YYYY-MM-DD');
 
 var ramenSchema = new Schema({
@@ -24,16 +24,34 @@ const CHANNEL = {
 };
 
 function setToday() {
+  if (!isConnectMongo) return;
   var today = moment().format('YYYY-MM-DD');
 
-  if (workDate != today)
+  if (workDate != today) {
     workDate = today;
+    readyOrderDocument();
+  }
+}
+
+function readyOrderDocument() {
+  Ramens.findOne({
+    orderDate: workDate
+  }).exec((err, docs) => {
+    if (!docs) {
+      var newDay = new Ramens({ orderDate: workDate, lastOrderNumber: 0, orders: [] });
+
+      newDay.save(function(err) {
+        console.log(err, 'create new day document');
+      });
+    }
+  });
 }
 
 setInterval(setToday, 1000*60);
 
 mongoose.connect('mongodb://officebob:officeboborder@ds011251.mlab.com:11251/heroku_q9xb9lk4', (err, db) => {
   console.log('connected mongodb');
+  readyOrderDocument();
 });
 
 app.use(express.static('public'));

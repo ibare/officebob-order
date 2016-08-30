@@ -102,6 +102,8 @@ $(function() {
   var slug = null;
   var socket = io();
 
+  $('.time').text(moment().format('M월 DD일'));
+
   if (isDesktop()) {
     swal('스마트폰에서 진행해 주시기 바랍니다. 예약과 주문을 같은 브라우저에서 진행해 주셔야합니다.');
   }
