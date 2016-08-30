@@ -10,7 +10,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^1.4.0",
     "express": "^4.14.0",
     "express-session": "^1.14.0",
     "fabric": "^1.6.3",
