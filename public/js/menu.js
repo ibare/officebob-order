@@ -8,19 +8,14 @@ var dayNames = {
 };
 
 $(function() {
-  var today = moment();
-  var c = new fabric.Canvas('c', { backgroundColor : "#fff" });
-  var box = new fabric.Rect({
-    width: 215,
-    height: 290,
-    fill: '#ff0',
-    // left: 138,
-    // top: 140,
-    opacity: 0
-  });
-  var menuGroup = new fabric.Group();
+  progressJs().setOptions({ overlayMode: true, theme: 'blueOverlay'}).start().autoIncrease(4, 200);
 
-  menuGroup.add(box);
+  var today = window.location.hash ? moment(window.location.hash.replace('#','')) : moment();
+  var c = new fabric.Canvas('c', { backgroundColor : "#fff" });
+
+  $(window).on('hashchange', function() {
+    location.reload();
+  });
 
   fabric.Image.fromURL('/images/today-menu-back.png', function(oImg) {
     c.add(oImg);
@@ -33,6 +28,7 @@ $(function() {
 
     $.getJSON(BobSheet, function (json) {
       var menus = [];
+      var center = { left: 240, top: 280 };
 
       json.feed.entry.forEach(function(menu) {
         if (menu.gsx$date.$t.substr(0,10) == today.format('YYYY.MM.DD')) {
@@ -40,20 +36,23 @@ $(function() {
         }
       });
 
-      var m = new fabric.Text(menus.join('\n'), { textAlign: 'center', fontSize: 22, fill: '#000', lineHeight: 1.8, fontFamily: 'BM1' });
-      menuGroup.add(m);
-      menuGroup.setCoords();
+      var m = new fabric.Text(menus.join('\n'), { textAlign: 'center', fontSize: 23, fill: '#000', lineHeight: 2.0, fontFamily: 'BM1' });
 
       c.add(m);
-      c.centerObject(m);
 
-      m.set({ top: 170 });
+      var width = m.getBoundingRectWidth(), height = m.getBoundingRectHeight();
+
+      m.set({
+        left: center.left - (width / 2),
+        top: center.top - (height / 2)
+      });
 
       setTimeout(function() {
         $('#menu').attr({
           'src': c.toDataURL({ format: 'jpeg', width: 495, height: 495 })
         });
-      }, 500);
+        progressJs().end();
+      }, 2000);
     });
   });
 });
