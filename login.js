@@ -1,4 +1,4 @@
-let ClientSecret = {
+var ClientSecret = {
   "web": {
     "client_id": "84402170629-hregoe4kevhm4brpr7cane4a2bufc6j5.apps.googleusercontent.com",
     "project_id": "searchaddress-1350",
@@ -17,7 +17,7 @@ let ClientSecret = {
   }
 };
 
-let request = require('request');
+var request = require('request');
 
 const REDIRECT_ENDPOINT = '/callback';
 const SCOPE             = 'https://www.googleapis.com/auth/admin.directory.user.readonly https://www.googleapis.com/auth/admin.directory.group.readonly https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.login profile email';
@@ -55,7 +55,7 @@ function checkId(accessToken) {
 }
 
 function loginCallback(req, res) {
-  let code = req.query.code || null;
+  var code = req.query.code || null;
 
   request.post('https://www.googleapis.com/oauth2/v4/token', {
     form: {
@@ -70,7 +70,7 @@ function loginCallback(req, res) {
       return console.error(err);
     }
 
-    let tokenInfo = JSON.parse(body);
+    var tokenInfo = JSON.parse(body);
 
     clientValidation(tokenInfo.access_token)
       .then(checkId)
