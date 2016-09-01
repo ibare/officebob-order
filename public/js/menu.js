@@ -8,7 +8,7 @@ var dayNames = {
 };
 
 $(function() {
-  progressJs().setOptions({ overlayMode: true, theme: 'blueOverlay'}).start().autoIncrease(4, 200);
+  progressJs().setOptions({ overlayMode: true, theme: 'blueOverlay'}).start().autoIncrease(4, 300);
 
   var today = window.location.hash ? moment(window.location.hash.replace('#','')) : moment();
   var c = new fabric.Canvas('c', { backgroundColor : "#fff" });

@@ -92,7 +92,7 @@ function setWindowSize() {
 
 $(window).on('resize', setWindowSize);
 
-$(function() {
+function mainApp() {
   var ramenOrder = getRamenOrder();
   var CHANNEL = {
     RESERVE: 'channel:reserve',
@@ -101,8 +101,6 @@ $(function() {
   };
   var slug = null;
   var socket = io();
-
-  $('.time').text(moment().format('M월 DD일'));
 
   if (isDesktop()) {
     swal('스마트폰에서 진행해 주시기 바랍니다. 예약과 주문을 같은 브라우저에서 진행해 주셔야합니다.');
@@ -323,4 +321,19 @@ $(function() {
 
   // 전체 주문 상태 요청
   socket.emit(CHANNEL.ORDER+'@all:orders');
+}
+
+$(function() {
+  $.get('/profile').done(function(data) {
+    var template = Handlebars.compile($("#template").html());
+
+    $('.container').html(template(data));
+    $('.time').text(moment().format('M월 DD일'));
+
+    console.log(data);
+
+    mainApp();
+  }).fail(function(err) {
+    location.href = '/login';
+  });
 });

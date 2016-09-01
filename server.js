@@ -2,10 +2,13 @@ var fs = require('fs');
 var lod = require('lodash');
 var moment = require('moment');
 var express = require('express');
+var session = require('express-session');
+let exphbs  = require('express-handlebars');
 var app = express();
 var server = require('http').Server(app);
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Login = require('./login');
 var io = require('socket.io')(server);
 var isConnectMongo = false;
 var workDate = moment().format('YYYY-MM-DD');
@@ -17,6 +20,8 @@ var ramenSchema = new Schema({
 });
 
 var Ramens = mongoose.model('ramen', ramenSchema);
+
+global.AUTHENTICATE = '__authenticate__';
 
 const CHANNEL = {
   RESERVE: 'channel:reserve',
@@ -55,7 +60,24 @@ mongoose.connect('mongodb://officebob:officeboborder@ds011251.mlab.com:11251/her
   readyOrderDocument();
 });
 
+app.engine('handlebars', exphbs());
+app.disable('x-powered-by');
+
 app.use(express.static('public'));
+app.use(session({ secret: 'keyboard cat' }));
+
+app.set('view engine', 'handlebars');
+
+app.get('/login', Login.page);
+app.post('/login', Login.requestLogin);
+app.get('/callback', Login.loginCallback);
+app.get('/profile', (req, res) => {
+  if (req.session[global.AUTHENTICATE]) {
+    res.send(req.session[global.AUTHENTICATE]);
+  } else {
+    res.status(401).send('plz login');
+  }
+});
 
 /**
  * 클라리언트 접속
