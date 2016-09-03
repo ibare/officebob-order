@@ -32,7 +32,7 @@
               <span class="time"></span><strong class="bold">셰프의 라면</strong>
           </h1>
           <div>
-            <img src="{{picture}}" alt="Contact Person" width="64" height="64" style="border-radius: 64px; border: 2px solid white;"><br>{{name}}
+            <img src="{{profile.picture}}" alt="Contact Person" width="64" height="64" style="border-radius: 64px; border: 2px solid white;"><br>{{profile.name}}
           </div>
       </div>
   </div>
@@ -53,7 +53,7 @@
            <img class="activator" src="/images/ramen.jpg">
          </div>
          <div class="card-content">
-           <p class="1st-info"></p>
+           <p class="first-info"></p>
          </div>
          <div class="card-action action-container">
            <span class="card-title activator grey-text text-darken-3">4:00 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
@@ -90,7 +90,7 @@
           <img class="activator" src="/images/ramen.jpg">
         </div>
         <div class="card-content">
-          <p class="2th-info"></p>
+          <p class="second-info"></p>
         </div>
         <div class="card-action action-container">
           <span class="card-title activator grey-text text-darken-3">4:30 PM<i class="material-icons right" style="margin-top: 7px;">perm_phone_msg</i></span>
@@ -127,8 +127,7 @@
     <div class="row" style="margin-bottom: 0;">
       <div class="col s12 center-align">
         <img src="/images/sik.jpg" width="140"><br>
-        <span class="warning">식권대장 결제 필수!!!</span><br><br>
-        <span class="thin">라면 조리는 키친에서 식권대장<br> 결제 후 진행됩니다.</span><br>
+        <span class="thin">라면 조리는 키친에서 식권대장<br> 결제 후 <strong>"식권 대장 결제 완료"</strong> 버튼을 눌러주세요.</span><br>
       </div>
     </div>
 
@@ -136,18 +135,10 @@
       <p>
         <strong class="bold"><span class="ramen-text"></span><br>주문하셨습니다.</strong>
       </p>
-      <p>
-        예약 번호 #<span class="reserve-no"></span><br>
-      </p>
 
       <div style="margin-bottom: 1em;">
-        <button class="check-reserve-signal btn btn-check-reserve btn-large waves-effect waves-light">결제 완료
+        <button class="check-reserve-signal btn btn-check-reserve btn-large waves-effect waves-light">식권 대장 결제 완료
           <i class="material-icons right">check</i>
-        </button>
-      </div>
-      <div>
-        <button class="cancel-reserve btn btn-check-reserve btn-large waves-effect waves-light red">예약 취소
-          <i class="material-icons right">remove</i>
         </button>
       </div>
     </div>
@@ -155,13 +146,12 @@
 
   <div id="cooking-board" class="row" style="display:none">
     <div class="col s12 center-align">
-      <i class="fa fa-clock-o fa-5x"></i>
-
       <h1 class="headline" itemprop="description" style="font-size: 22px; line-height: 200%;">
         대기 번호<br>#<span class="wati-order-no" style="font-size: 50px;"></span>
       </h1>
       <p>
         <strong class="bold"><span class="ramen-text"></span> 조리중입니다.</strong><br>
+        <span class="lastOrder"></span>
       </p>
       <div>
         <button class="ckeck-cook btn btn-large waves-effect waves-light">조리 확인
@@ -182,11 +172,6 @@
         <strong class="bold"><span class="ramen-text"></span>라면이 나왔습니다.</strong><br>
       </p>
 
-      <p style="margin-top: 3em;">
-        <button class="btn btn-finish-eat btn-large waves-effect waves-light green">잘 먹었습니다
-          <i class="material-icons right">done</i>
-        </button>
-      </p>
     </div>
   </div>
 </script>

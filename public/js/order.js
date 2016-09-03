@@ -10,30 +10,7 @@ var TodayOrderStatus = {
     cook: 0,
     cooked: 0
   }
-}
-
-function getRamenOrder() {
-  var ramenOrder = window.localStorage.getItem(SAVEID);
-
-  if (ramenOrder) {
-    return JSON.parse(ramenOrder);
-  } else {
-    return false;
-  }
-}
-
-function setRamenOrder(info) {
-  window.localStorage.setItem(SAVEID, JSON.stringify(info));
-  return info;
-}
-
-function clearRamenOrder() {
-  window.localStorage.removeItem(SAVEID);
-}
-
-function isDesktop() {
-  return window.screen.width >= 960;
-}
+};
 
 function activateBoard(order) {
   if (order) {
@@ -92,8 +69,7 @@ function setWindowSize() {
 
 $(window).on('resize', setWindowSize);
 
-function mainApp() {
-  var ramenOrder = getRamenOrder();
+function mainApp(ramenOrder, profile) {
   var CHANNEL = {
     RESERVE: 'channel:reserve',
     ORDER: 'channel:order',
@@ -101,10 +77,6 @@ function mainApp() {
   };
   var slug = null;
   var socket = io();
-
-  if (isDesktop()) {
-    swal('스마트폰에서 진행해 주시기 바랍니다. 예약과 주문을 같은 브라우저에서 진행해 주셔야합니다.');
-  }
 
   setWindowSize();
   activateBoard(ramenOrder);
@@ -121,15 +93,14 @@ function mainApp() {
       TodayOrderStatus[order.time][order.status]++;
     });
 
-    $('.1st-info').text('현재 예약자 '+TodayOrderStatus['1st'].reserve+' 명, '+ TodayOrderStatus['1st'].cook +' 명 조리중');
-    $('.2th-info').text('현재 예약자 '+TodayOrderStatus['2th'].reserve+' 명, '+ TodayOrderStatus['2th'].cook +' 명 조리중');
+    $('.first-info').text('현재 예약자 '+TodayOrderStatus['1st'].reserve+' 명, '+ TodayOrderStatus['1st'].cook +' 명 조리중');
+    $('.second-info').text('현재 예약자 '+TodayOrderStatus['2th'].reserve+' 명, '+ TodayOrderStatus['2th'].cook +' 명 조리중');
   });
 
   // 예약 완료
-  socket.on(CHANNEL.RESERVE+'@reserve:order:response', function(orderNumber) {
-    ramenOrder.orderNumber = orderNumber;
+  socket.on(CHANNEL.RESERVE+'@reserve:order:response', function(order) {
+    ramenOrder = order;
 
-    setRamenOrder(ramenOrder);
     activateBoard(ramenOrder);
 
     swal("성공", "예약이 완료되었습니다. 시간에 맞춰 키친에서 반드시 식권대장으로 결제 후 맛있게 드십시오.", "success");
@@ -141,7 +112,6 @@ function mainApp() {
       ramenOrder.status = 'cook';
       ramenOrder.orderNumber = info.orderNumber;
 
-      setRamenOrder(ramenOrder);
       activateBoard(ramenOrder);
     }
   });
@@ -150,12 +120,11 @@ function mainApp() {
    * 조리 완료!!
    */
   socket.on(CHANNEL.CONFIRM+'@finish:order:response', function(info) {
-    console.log(ramenOrder, info);
     if (info.slug == ramenOrder.slug) {
       ramenOrder.status = 'cooked';
-
-      setRamenOrder(ramenOrder);
       activateBoard(ramenOrder);
+    } else {
+      $('.lastOrder').html('<strong>#'+info.orderNumber+'</strong>번이 조리 완료.<br><strong>#'+(info.orderNumber+1)+'</strong>번 주문 조리 시작!');
     }
   });
 
@@ -229,17 +198,11 @@ function mainApp() {
       if (isConfirm) {
         slug = Math.floor(Math.random()*(max-min+1)+min);
 
-        ramenOrder = setRamenOrder({
-          slug: slug,
-          orderNumber: 0,
-          time: time,
-          ramen1: group1,
-          ramen2: group2,
-          status: 'reserve'
-        });
-
         socket.emit(`${CHANNEL.ORDER}@reserve:order`, {
           slug: slug,
+          username: profile.name,
+          email: profile.email,
+          picture: profile.picture,
           time: time,
           ramen1: group1,
           ramen2: group2
@@ -284,8 +247,6 @@ function mainApp() {
       confirmButtonText: "취소합니다",
       closeOnConfirm: false
     }, function() {
-      clearRamenOrder();
-
       ramenOrder = getRamenOrder();
       slug = null;
 
@@ -307,10 +268,7 @@ function mainApp() {
   });
 
   $('.btn-finish-eat').on('click', function(event) {
-    clearRamenOrder();
-
     Materialize.toast('감사합니다.', 2000, '', function() {
-      ramenOrder = getRamenOrder();
       slug = null;
 
       activateBoard(ramenOrder);
@@ -330,9 +288,7 @@ $(function() {
     $('.container').html(template(data));
     $('.time').text(moment().format('M월 DD일'));
 
-    console.log(data);
-
-    mainApp();
+    mainApp(data.order, data.profile);
   }).fail(function(err) {
     location.href = '/login';
   });

@@ -53,6 +53,15 @@ function readyOrderDocument() {
   });
 }
 
+function matchOrderWidthSlug(orders, slug) {
+  return lod.first(lod.filter(orders, order => order.slug == slug))
+}
+
+function matchOrderWidthEmail(orders, email) {
+  return lod.first(lod.filter(orders, order => order.email == email))
+}
+
+
 setInterval(setToday, 1000*60);
 
 mongoose.connect('mongodb://officebob:officeboborder@ds011251.mlab.com:11251/heroku_q9xb9lk4', (err, db) => {
@@ -73,7 +82,15 @@ app.post('/login', Login.requestLogin);
 app.get('/callback', Login.loginCallback);
 app.get('/profile', (req, res) => {
   if (req.session[global.AUTHENTICATE]) {
-    res.send(req.session[global.AUTHENTICATE]);
+    var email = req.session[global.AUTHENTICATE].email;
+    Ramens.findOne({
+      'orderDate': workDate, 'orders.email': email
+    }, (err, docs) => {
+      res.send({
+        profile: req.session[global.AUTHENTICATE],
+        order: docs ? matchOrderWidthEmail(docs.toJSON().orders, email) : null
+      });
+    });
   } else {
     res.status(401).send('plz login');
   }
@@ -103,9 +120,11 @@ io.sockets.on('connection', socket => {
     Ramens.findOne({
       orderDate: workDate
     }).exec((err, docs) => {
-      console.log(workDate, err, docs);
       var order = {
         slug: bill.slug,
+        username: bill.username,
+        email: bill.email,
+        picture: bill.picture,
         time: bill.time,
         ramen1: bill.ramen1,
         ramen2: bill.ramen2,
@@ -117,7 +136,7 @@ io.sockets.on('connection', socket => {
       docs.orders.push(order);
       docs.save((err, docs) => {
         // 신규 예약 번호 응답
-        socket.emit(`${CHANNEL.RESERVE}@reserve:order:response`, bill.slug);
+        socket.emit(`${CHANNEL.RESERVE}@reserve:order:response`, order);
         // 주문서 업데이트
         socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
         socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
@@ -131,26 +150,27 @@ io.sockets.on('connection', socket => {
   });
 
   // 조리 시작
-  socket.on(`${CHANNEL.CONFIRM}@start:order`, slug => {
-    console.log('@start:order');
+  socket.on(`${CHANNEL.CONFIRM}@start:order`, orderInfo => {
     Ramens.findOne({
-      orderDate: workDate,
+      orderDate: workDate
     }).exec((err, docs) => {
       var newOrderNumber = docs.lastOrderNumber + 1;
 
-      Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
+      Ramens.update({ orderDate: workDate, 'orders.slug': Number(orderInfo.slug) }, { '$set': {
         'lastOrderNumber': newOrderNumber,
         'orders.$.status': 'cook',
-        'orders.$.orderNumber': newOrderNumber
+        'orders.$.orderNumber': newOrderNumber,
+        'orders.$.ramen1': orderInfo.ramen1,
+        'orders.$.ramen2': orderInfo.ramen2
       }}, function(err, docs) {
         // 주문서 업데이트
         Ramens.findOne({
-          orderDate: workDate,
+          orderDate: workDate
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.CONFIRM}@start:order:response`, {
-            slug: slug, orderNumber: newOrderNumber
+            slug: orderInfo.slug, orderNumber: newOrderNumber
           });
         });
       });
@@ -161,7 +181,7 @@ io.sockets.on('connection', socket => {
   socket.on(`${CHANNEL.ORDER}@ckeckcook:order`, slug => {
     console.log('@checkcook:order', slug);
     Ramens.findOne({
-      orderDate: workDate,
+      orderDate: workDate
     }).exec((err, docs) => {
       var isFind = false;
       docs.orders.forEach(order => {
@@ -186,21 +206,21 @@ io.sockets.on('connection', socket => {
   // 조리 완료
   socket.on(`${CHANNEL.CONFIRM}@finsh:order`, slug => {
     Ramens.findOne({
-      orderDate: workDate,
+      orderDate: workDate
     }, (err, docs) => {
-      var newOrderNumber = docs.lastOrderNumber + 1;
+      var finshOrder = matchOrderWidthSlug(docs.orders, slug);
 
       Ramens.update({ orderDate: workDate, 'orders.slug': Number(slug) }, { '$set': {
         'orders.$.status': 'cooked'
       }}, function(err) {
         // 주문서 업데이트
         Ramens.findOne({
-          orderDate: workDate,
+          orderDate: workDate
         }).exec((err, docs) => {
           socket.emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.ORDER}@update:orders:response`, docs.orders);
           socket.to('ALL').emit(`${CHANNEL.CONFIRM}@finish:order:response`, {
-            slug: slug, orderNumber: newOrderNumber
+            slug: slug, orderNumber: finshOrder.orderNumber
           });
         });
       });

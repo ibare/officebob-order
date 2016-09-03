@@ -33,6 +33,7 @@ $(function() {
       length: 0
     };
 
+    renderData.cookingDish = 0;
     renderData.cookedDish = 0;
 
     renderData.reserve.items = orders.filter(function(order) {
@@ -53,6 +54,9 @@ $(function() {
 
     if (renderData.cook.items.length > 0) {
       renderData.cook.items = _.sortBy(renderData.cook.items, 'orderNumber');
+      renderData.cook.items.forEach(function(order) {
+        renderData.cookingDish = renderData.cookingDish + (order.ramen1 + order.ramen2);
+      });
     }
 
     if (renderData.cooked.items.length > 0) {
@@ -64,9 +68,16 @@ $(function() {
 
     $('.container').html(template(renderData));
 
+    /**
+     * 조리 시작!
+     */
     $('.order.confirm').on('click', function(event) {
       lastTabId = 'reserve';
-      socket.emit(CHANNEL.CONFIRM+'@start:order', event.target.dataset.slug);
+      var slug = event.target.dataset.slug;
+      var ramen1 = +$('input[name=ramen1][data-slug='+slug+']').val();
+      var ramen2 = +$('input[name=ramen2][data-slug='+slug+']').val();
+
+      socket.emit(CHANNEL.CONFIRM+'@start:order', { slug: slug, ramen1: ramen1, ramen2: ramen2 });
     });
 
     $('.order.cooked').on('click', function(event) {
@@ -75,6 +86,7 @@ $(function() {
     });
 
     $('ul.tabs').tabs();
+
     $('.collapsible').collapsible({ accordion : false });
     $('ul.tabs').tabs('select_tab', lastTabId || 'reserve');
   });
